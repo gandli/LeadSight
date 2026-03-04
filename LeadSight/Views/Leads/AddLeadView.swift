@@ -30,7 +30,10 @@ struct AddLeadView: View {
     }
     
     private var isFormValid: Bool {
-        !title.isEmpty && !location.isEmpty && !content.isEmpty && !reporter.isEmpty
+        !title.trimmingCharacters(in: .whitespaces).isEmpty &&
+        !location.trimmingCharacters(in: .whitespaces).isEmpty &&
+        !content.trimmingCharacters(in: .whitespaces).isEmpty &&
+        !reporter.trimmingCharacters(in: .whitespaces).isEmpty
     }
     
     var body: some View {
@@ -71,11 +74,11 @@ struct AddLeadView: View {
                     Button("提交") {
                         let newLead = Lead(
                             id: UUID(),
-                            title: title,
-                            location: location,
+                            title: title.trimmingCharacters(in: .whitespaces),
+                            location: location.trimmingCharacters(in: .whitespaces),
                             timestamp: Date(),
-                            content: content,
-                            reporter: reporter,
+                            content: content.trimmingCharacters(in: .whitespacesAndNewlines),
+                            reporter: reporter.trimmingCharacters(in: .whitespaces),
                             status: status,
                             aiAnalysis: nil,
                             imageName: stage.imageName,
