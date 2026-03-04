@@ -8,6 +8,7 @@
 
 /* Begin PBXFileReference section */
 		CEFE7FB72F53494100FF6373 /* LeadSight.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LeadSight.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CEFE80012F53500000FF6373 /* LeadSightTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LeadSightTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -16,10 +17,22 @@
 			path = LeadSight;
 			sourceTree = "<group>";
 		};
+		CEFE80022F53500000FF6373 /* LeadSightTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = LeadSightTests;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		CEFE7FB42F53494100FF6373 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CEFE7FFE2F53500000FF6373 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -33,6 +46,7 @@
 			isa = PBXGroup;
 			children = (
 				CEFE7FB92F53494100FF6373 /* LeadSight */,
+				CEFE80022F53500000FF6373 /* LeadSightTests */,
 				CEFE7FB82F53494100FF6373 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,6 +55,7 @@
 			isa = PBXGroup;
 			children = (
 				CEFE7FB72F53494100FF6373 /* LeadSight.app */,
+				CEFE80012F53500000FF6373 /* LeadSightTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -70,6 +85,29 @@
 			productReference = CEFE7FB72F53494100FF6373 /* LeadSight.app */;
 			productType = "com.apple.product-type.application";
 		};
+		CEFE80002F53500000FF6373 /* LeadSightTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CEFE80042F53500000FF6373 /* Build configuration list for PBXNativeTarget "LeadSightTests" */;
+			buildPhases = (
+				CEFE7FFD2F53500000FF6373 /* Sources */,
+				CEFE7FFE2F53500000FF6373 /* Frameworks */,
+				CEFE7FFF2F53500000FF6373 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CEFE80032F53500000FF6373 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				CEFE80022F53500000FF6373 /* LeadSightTests */,
+			);
+			name = LeadSightTests;
+			packageProductDependencies = (
+			);
+			productName = LeadSightTests;
+			productReference = CEFE80012F53500000FF6373 /* LeadSightTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -82,6 +120,10 @@
 				TargetAttributes = {
 					CEFE7FB62F53494100FF6373 = {
 						CreatedOnToolsVersion = 26.3;
+					};
+					CEFE80002F53500000FF6373 = {
+						CreatedOnToolsVersion = 26.3;
+						TestTargetID = CEFE7FB62F53494100FF6373;
 					};
 				};
 			};
@@ -100,12 +142,20 @@
 			projectRoot = "";
 			targets = (
 				CEFE7FB62F53494100FF6373 /* LeadSight */,
+				CEFE80002F53500000FF6373 /* LeadSightTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		CEFE7FB52F53494100FF6373 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CEFE7FFF2F53500000FF6373 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -122,7 +172,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CEFE7FFD2F53500000FF6373 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		CEFE80032F53500000FF6373 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CEFE7FB62F53494100FF6373 /* LeadSight */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		CEFE7FC02F53494800FF6373 /* Debug */ = {
@@ -306,6 +370,44 @@
 			};
 			name = Release;
 		};
+		CEFE80052F53500000FF6373 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = gandli.LeadSightTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LeadSight.app/$(PRODUCT_NAME)";
+			};
+			name = Debug;
+		};
+		CEFE80062F53500000FF6373 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = gandli.LeadSightTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LeadSight.app/$(PRODUCT_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -323,6 +425,15 @@
 			buildConfigurations = (
 				CEFE7FC32F53494800FF6373 /* Debug */,
 				CEFE7FC42F53494800FF6373 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CEFE80042F53500000FF6373 /* Build configuration list for PBXNativeTarget "LeadSightTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CEFE80052F53500000FF6373 /* Debug */,
+				CEFE80062F53500000FF6373 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

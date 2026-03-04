@@ -35,7 +35,8 @@ enum AIService {
                 confidence: 0.95
             )
         ]
-        return scenarios.randomElement()!
+        // Safely unwrap random element with fallback to first scenario
+        return scenarios.randomElement() ?? scenarios[0]
     }
     
     // MARK: - Audio Analysis
