@@ -2,7 +2,6 @@ import SwiftUI
 
 struct EmergencyButton: View {
     var action: () -> Void
-    @State private var isPressed = false
     
     var body: some View {
         Button {
