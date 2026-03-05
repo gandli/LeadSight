@@ -10,11 +10,13 @@ import SwiftUI
 @main
 struct LeadSightApp: App {
     @State private var dataStore = DataStore()
+    @State private var caseManager = CaseManager()
     
     var body: some Scene {
         WindowGroup {
             MainTabView()
                 .environment(dataStore)
+                .environment(caseManager)
         }
     }
 }

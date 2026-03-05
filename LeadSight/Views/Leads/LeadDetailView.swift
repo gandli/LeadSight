@@ -2,8 +2,15 @@ import SwiftUI
 
 struct LeadDetailView: View {
     @Environment(DataStore.self) private var dataStore
+    @Environment(CaseManager.self) private var caseManager
     let lead: Lead
     @State private var showingCollector = false
+    @State private var showingCorrelationGraph = false
+    @State private var showingLocationView = false
+    
+    var relatedCase: EnforcementCase? {
+        caseManager.caseForLead(lead.id)
+    }
     
     var body: some View {
         ScrollView {
@@ -35,6 +42,19 @@ struct LeadDetailView: View {
                             .padding(.vertical, 4)
                             .foregroundStyle(.white)
                             .background(lead.status.color, in: Capsule())
+                        
+                        if let relatedCase = relatedCase {
+                            NavigationLink(value: relatedCase) {
+                                Text("案件: \(relatedCase.caseNumber)")
+                                    .font(.caption)
+                                    .fontWeight(.semibold)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                                    .foregroundStyle(.white)
+                                    .background(.purple, in: Capsule())
+                            }
+                        }
+                        
                         Spacer()
                     }
                     
@@ -80,10 +100,19 @@ struct LeadDetailView: View {
                 }
                 .padding(.horizontal)
                 
-                // Location
+                // Location with Map Button
                 VStack(alignment: .leading, spacing: 10) {
-                    Text("位置信息")
-                        .font(.headline)
+                    HStack {
+                        Text("位置信息")
+                            .font(.headline)
+                        Spacer()
+                        Button {
+                            showingLocationView = true
+                        } label: {
+                            Label("地图", systemImage: "map.fill")
+                                .font(.caption)
+                        }
+                    }
                     HStack {
                         Image(systemName: "mappin.and.ellipse")
                             .foregroundStyle(.red)
@@ -117,9 +146,25 @@ struct LeadDetailView: View {
                 
                 Divider().padding(.horizontal)
                 
-                // AI Correlation
-                AICorrelationView(lead: lead)
-                    .padding(.horizontal)
+                // AI Correlation with Graph Button
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack {
+                        Image(systemName: "brain.head.profile.fill")
+                            .foregroundStyle(.purple)
+                        Text("AI 智能关联")
+                            .font(.headline)
+                        Spacer()
+                        Button {
+                            showingCorrelationGraph = true
+                        } label: {
+                            Label("图谱", systemImage: "network")
+                                .font(.caption)
+                        }
+                    }
+                    
+                    AICorrelationView(lead: lead)
+                }
+                .padding(.horizontal)
                 
                 Divider().padding(.horizontal)
                 
@@ -173,8 +218,24 @@ struct LeadDetailView: View {
         .navigationDestination(for: Evidence.self) { evidence in
             EvidenceDetailView(evidence: evidence)
         }
+        .navigationDestination(for: EnforcementCase.self) { enforcementCase in
+            CaseDetailView(enforcementCase: enforcementCase)
+                .environment(caseManager)
+        }
         .sheet(isPresented: $showingCollector) {
             EvidenceCollectorView(leadID: lead.id)
+        }
+        .sheet(isPresented: $showingCorrelationGraph) {
+            NavigationStack {
+                CorrelationGraphView(lead: lead)
+            }
+            .presentationDetents([.large])
+        }
+        .sheet(isPresented: $showingLocationView) {
+            NavigationStack {
+                LeadLocationView(lead: lead)
+            }
+            .presentationDetents([.large])
         }
     }
 }
@@ -183,5 +244,6 @@ struct LeadDetailView: View {
     NavigationStack {
         LeadDetailView(lead: DataStore().leads[0])
             .environment(DataStore())
+            .environment(CaseManager())
     }
 }
