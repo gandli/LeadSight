@@ -2,14 +2,14 @@ import SwiftUI
 
 struct LeadDetailView: View {
     @Environment(DataStore.self) private var dataStore
-    @Environment(CaseManager.self) private var caseManager
+    @Environment(LeadManager.self) private var leadManager
     let lead: Lead
     @State private var showingCollector = false
     @State private var showingCorrelationGraph = false
     @State private var showingLocationView = false
     
-    var relatedCase: EnforcementCase? {
-        caseManager.caseForLead(lead.id)
+    var relatedAggregation: EnforcementLead? {
+        leadManager.aggregationForLead(lead.id)
     }
     
     var body: some View {
@@ -43,9 +43,9 @@ struct LeadDetailView: View {
                             .foregroundStyle(.white)
                             .background(lead.status.color, in: Capsule())
                         
-                        if let relatedCase = relatedCase {
-                            NavigationLink(value: relatedCase) {
-                                Text("案件: \(relatedCase.caseNumber)")
+                        if let relatedAggregation = relatedAggregation {
+                            NavigationLink(value: relatedAggregation) {
+                                Text("聚合: \(relatedAggregation.leadNumber)")
                                     .font(.caption)
                                     .fontWeight(.semibold)
                                     .padding(.horizontal, 8)
@@ -218,9 +218,9 @@ struct LeadDetailView: View {
         .navigationDestination(for: Evidence.self) { evidence in
             EvidenceDetailView(evidence: evidence)
         }
-        .navigationDestination(for: EnforcementCase.self) { enforcementCase in
-            CaseDetailView(enforcementCase: enforcementCase)
-                .environment(caseManager)
+        .navigationDestination(for: EnforcementLead.self) { enforcementLead in
+            LeadAnalysisView(enforcementLead: enforcementLead)
+                .environment(leadManager)
         }
         .sheet(isPresented: $showingCollector) {
             EvidenceCollectorView(leadID: lead.id)
@@ -244,6 +244,6 @@ struct LeadDetailView: View {
     NavigationStack {
         LeadDetailView(lead: DataStore().leads[0])
             .environment(DataStore())
-            .environment(CaseManager())
+            .environment(LeadManager())
     }
 }

@@ -1,26 +1,27 @@
 import Foundation
 import SwiftUI
 
-// MARK: - Case Model
+// MARK: - Enforcement Lead Model
+// 线索聚合：聚合多条相关线索形成的卷宗
 
-struct EnforcementCase: Identifiable, Codable, Hashable {
+struct EnforcementLead: Identifiable, Codable, Hashable {
     let id: UUID
     var title: String
-    var caseNumber: String
-    var status: CaseStatus
-    var priority: CasePriority
+    var leadNumber: String  // 线索编号，如 TY-2025-0001
+    var status: LeadAggregationStatus
+    var priority: LeadPriority
     var createdAt: Date
     var updatedAt: Date
     var leadIDs: [UUID]
     var description: String
     var assignedOfficers: [String]
     var location: String
-    var notes: [CaseNote]
+    var notes: [LeadNote]
     
-    enum CaseStatus: String, Codable, CaseIterable {
+    enum LeadAggregationStatus: String, Codable, CaseIterable {
         case active = "进行中"
         case pending = "待跟进"
-        case closed = "已结案"
+        case closed = "已结档"
         case archived = "已归档"
         
         var color: Color {
@@ -42,7 +43,7 @@ struct EnforcementCase: Identifiable, Codable, Hashable {
         }
     }
     
-    enum CasePriority: String, Codable, CaseIterable {
+    enum LeadPriority: String, Codable, CaseIterable {
         case critical = "紧急"
         case high = "高优先级"
         case medium = "中优先级"
@@ -74,33 +75,34 @@ struct EnforcementCase: Identifiable, Codable, Hashable {
     }
 }
 
-// MARK: - Case Note
+// MARK: - Lead Note
 
-struct CaseNote: Identifiable, Codable, Hashable {
+struct LeadNote: Identifiable, Codable, Hashable {
     let id: UUID
     let content: String
     let timestamp: Date
     let author: String
 }
 
-// MARK: - Case Manager
+// MARK: - Lead Manager
+// 线索聚合管理器：管理线索聚合的创建、关联和状态
 
 @Observable
-class CaseManager {
-    var cases: [EnforcementCase] = []
+class LeadManager {
+    var aggregations: [EnforcementLead] = []
     
     init() {
-        // Sample cases
+        // Sample lead aggregations
         let sharedLeadIDs = [
             UUID(uuidString: "00000000-0000-0000-0000-000000000001")!,
             UUID(uuidString: "00000000-0000-0000-0000-000000000002")!
         ]
         
-        self.cases = [
-            EnforcementCase(
+        self.aggregations = [
+            EnforcementLead(
                 id: UUID(),
                 title: "特大制假窝点专项打击",
-                caseNumber: "TY-2025-0001",
+                leadNumber: "TY-2025-0001",
                 status: .active,
                 priority: .critical,
                 createdAt: Date().addingTimeInterval(-86400 * 7),
@@ -110,14 +112,14 @@ class CaseManager {
                 assignedOfficers: ["张三", "李四"],
                 location: "郊区工业园",
                 notes: [
-                    CaseNote(id: UUID(), content: "已确认生产设备型号，正在追踪设备来源。", timestamp: Date().addingTimeInterval(-86400), author: "张三"),
-                    CaseNote(id: UUID(), content: "嫌疑人行踪已锁定，准备收网。", timestamp: Date().addingTimeInterval(-3600), author: "李四")
+                    LeadNote(id: UUID(), content: "已确认生产设备型号，正在追踪设备来源。", timestamp: Date().addingTimeInterval(-86400), author: "张三"),
+                    LeadNote(id: UUID(), content: "嫌疑人行踪已锁定，准备收网。", timestamp: Date().addingTimeInterval(-3600), author: "李四")
                 ]
             ),
-            EnforcementCase(
+            EnforcementLead(
                 id: UUID(),
                 title: "跨境走私香烟链条案",
-                caseNumber: "TY-2025-0002",
+                leadNumber: "TY-2025-0002",
                 status: .active,
                 priority: .high,
                 createdAt: Date().addingTimeInterval(-86400 * 3),
@@ -128,10 +130,10 @@ class CaseManager {
                 location: "自贸区4号码头",
                 notes: []
             ),
-            EnforcementCase(
+            EnforcementLead(
                 id: UUID(),
                 title: "物流寄递渠道专项整治",
-                caseNumber: "TY-2025-0003",
+                leadNumber: "TY-2025-0003",
                 status: .pending,
                 priority: .medium,
                 createdAt: Date().addingTimeInterval(-86400 * 14),
@@ -145,11 +147,11 @@ class CaseManager {
         ]
     }
     
-    func createCase(title: String, caseNumber: String, priority: EnforcementCase.CasePriority, description: String, location: String) -> EnforcementCase {
-        let newCase = EnforcementCase(
+    func createAggregation(title: String, leadNumber: String, priority: EnforcementLead.LeadPriority, description: String, location: String) -> EnforcementLead {
+        let newAggregation = EnforcementLead(
             id: UUID(),
             title: title,
-            caseNumber: caseNumber,
+            leadNumber: leadNumber,
             status: .pending,
             priority: priority,
             createdAt: Date(),
@@ -160,42 +162,42 @@ class CaseManager {
             location: location,
             notes: []
         )
-        cases.insert(newCase, at: 0)
-        return newCase
+        aggregations.insert(newAggregation, at: 0)
+        return newAggregation
     }
     
-    func addLead(_ leadID: UUID, to caseID: UUID) {
-        if let index = cases.firstIndex(where: { $0.id == caseID }) {
-            if !cases[index].leadIDs.contains(leadID) {
-                cases[index].leadIDs.append(leadID)
-                cases[index].updatedAt = Date()
+    func addLead(_ leadID: UUID, to aggregationID: UUID) {
+        if let index = aggregations.firstIndex(where: { $0.id == aggregationID }) {
+            if !aggregations[index].leadIDs.contains(leadID) {
+                aggregations[index].leadIDs.append(leadID)
+                aggregations[index].updatedAt = Date()
             }
         }
     }
     
-    func removeLead(_ leadID: UUID, from caseID: UUID) {
-        if let index = cases.firstIndex(where: { $0.id == caseID }) {
-            cases[index].leadIDs.removeAll { $0 == leadID }
-            cases[index].updatedAt = Date()
+    func removeLead(_ leadID: UUID, from aggregationID: UUID) {
+        if let index = aggregations.firstIndex(where: { $0.id == aggregationID }) {
+            aggregations[index].leadIDs.removeAll { $0 == leadID }
+            aggregations[index].updatedAt = Date()
         }
     }
     
-    func addNote(_ content: String, author: String, to caseID: UUID) {
-        if let index = cases.firstIndex(where: { $0.id == caseID }) {
-            let note = CaseNote(id: UUID(), content: content, timestamp: Date(), author: author)
-            cases[index].notes.insert(note, at: 0)
-            cases[index].updatedAt = Date()
+    func addNote(_ content: String, author: String, to aggregationID: UUID) {
+        if let index = aggregations.firstIndex(where: { $0.id == aggregationID }) {
+            let note = LeadNote(id: UUID(), content: content, timestamp: Date(), author: author)
+            aggregations[index].notes.insert(note, at: 0)
+            aggregations[index].updatedAt = Date()
         }
     }
     
-    func updateStatus(_ status: EnforcementCase.CaseStatus, for caseID: UUID) {
-        if let index = cases.firstIndex(where: { $0.id == caseID }) {
-            cases[index].status = status
-            cases[index].updatedAt = Date()
+    func updateStatus(_ status: EnforcementLead.LeadAggregationStatus, for aggregationID: UUID) {
+        if let index = aggregations.firstIndex(where: { $0.id == aggregationID }) {
+            aggregations[index].status = status
+            aggregations[index].updatedAt = Date()
         }
     }
     
-    func caseForLead(_ leadID: UUID) -> EnforcementCase? {
-        cases.first { $0.leadIDs.contains(leadID) }
+    func aggregationForLead(_ leadID: UUID) -> EnforcementLead? {
+        aggregations.first { $0.leadIDs.contains(leadID) }
     }
 }

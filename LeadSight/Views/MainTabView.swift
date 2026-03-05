@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct MainTabView: View {
-    @State private var caseManager = CaseManager()
+    @State private var leadManager = LeadManager()
     
     var body: some View {
         TabView {
@@ -15,11 +15,11 @@ struct MainTabView: View {
                     Label("线索", systemImage: "list.bullet.rectangle.portrait.fill")
                 }
             
-            CaseListView()
+            LeadAggregationView()
                 .tabItem {
-                    Label("案件", systemImage: "folder.fill")
+                    Label("线索聚合", systemImage: "folder.fill")
                 }
-                .environment(caseManager)
+                .environment(leadManager)
             
             ProfileView()
                 .tabItem {
@@ -27,7 +27,7 @@ struct MainTabView: View {
                 }
         }
         .tint(.blue)
-        .environment(caseManager)
+        .environment(leadManager)
     }
 }
 

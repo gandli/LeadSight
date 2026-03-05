@@ -1,16 +1,16 @@
 import SwiftUI
 
-struct CaseListView: View {
+struct LeadAggregationView: View {
     @Environment(DataStore.self) private var dataStore
-    @State private var caseManager = CaseManager()
-    @State private var showingNewCase = false
-    @State private var selectedStatus: EnforcementCase.CaseStatus?
+    @State private var leadManager = LeadManager()
+    @State private var showingNewAggregation = false
+    @State private var selectedStatus: EnforcementLead.LeadAggregationStatus?
     
-    private var filteredCases: [EnforcementCase] {
+    private var filteredAggregations: [EnforcementLead] {
         if let status = selectedStatus {
-            return caseManager.cases.filter { $0.status == status }
+            return leadManager.aggregations.filter { $0.status == status }
         }
-        return caseManager.cases
+        return leadManager.aggregations
     }
     
     var body: some View {
@@ -22,7 +22,7 @@ struct CaseListView: View {
                         StatusFilterChip(label: "全部", isSelected: selectedStatus == nil) {
                             selectedStatus = nil
                         }
-                        ForEach(EnforcementCase.CaseStatus.allCases, id: \.self) { status in
+                        ForEach(EnforcementLead.LeadAggregationStatus.allCases, id: \.self) { status in
                             StatusFilterChip(
                                 label: status.rawValue,
                                 icon: status.systemImage,
@@ -37,64 +37,64 @@ struct CaseListView: View {
                 }
                 .background(.bar)
                 
-                // Cases List
-                if filteredCases.isEmpty {
+                // Lead Aggregations List
+                if filteredAggregations.isEmpty {
                     VStack(spacing: 16) {
                         Image(systemName: "folder.badge.questionmark")
                             .font(.system(size: 50))
                             .foregroundStyle(.tertiary)
-                        Text("暂无案件")
+                        Text("暂无线索聚合")
                             .font(.headline)
                             .foregroundStyle(.secondary)
                         Button {
-                            showingNewCase = true
+                            showingNewAggregation = true
                         } label: {
-                            Label("创建案件", systemImage: "plus.circle.fill")
+                            Label("创建聚合", systemImage: "plus.circle.fill")
                         }
                         .buttonStyle(.borderedProminent)
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
                     List {
-                        ForEach(filteredCases) { enforcementCase in
-                            NavigationLink(value: enforcementCase) {
-                                CaseRow(enforcementCase: enforcementCase, dataStore: dataStore)
+                        ForEach(filteredAggregations) { enforcementLead in
+                            NavigationLink(value: enforcementLead) {
+                                LeadAggregationRow(enforcementLead: enforcementLead, dataStore: dataStore)
                             }
                         }
                     }
                     .listStyle(.insetGrouped)
                 }
             }
-            .navigationTitle("案件管理")
-            .navigationDestination(for: EnforcementCase.self) { enforcementCase in
-                CaseDetailView(enforcementCase: enforcementCase)
-                    .environment(caseManager)
+            .navigationTitle("线索聚合")
+            .navigationDestination(for: EnforcementLead.self) { enforcementLead in
+                LeadAnalysisView(enforcementLead: enforcementLead)
+                    .environment(leadManager)
             }
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button {
-                        showingNewCase = true
+                        showingNewAggregation = true
                     } label: {
                         Image(systemName: "plus.circle.fill")
                     }
                 }
             }
-            .sheet(isPresented: $showingNewCase) {
-                NewCaseView()
-                    .environment(caseManager)
+            .sheet(isPresented: $showingNewAggregation) {
+                NewAggregationView()
+                    .environment(leadManager)
             }
         }
     }
 }
 
-// MARK: - Case Row
+// MARK: - Lead Aggregation Row
 
-private struct CaseRow: View {
-    let enforcementCase: EnforcementCase
+private struct LeadAggregationRow: View {
+    let enforcementLead: EnforcementLead
     let dataStore: DataStore
     
     private var leads: [Lead] {
-        dataStore.leads.filter { enforcementCase.leadIDs.contains($0.id) }
+        dataStore.leads.filter { enforcementLead.leadIDs.contains($0.id) }
     }
     
     private var evidenceCount: Int {
@@ -106,32 +106,32 @@ private struct CaseRow: View {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
                     HStack(spacing: 8) {
-                        Text(enforcementCase.caseNumber)
+                        Text(enforcementLead.leadNumber)
                             .font(.caption)
                             .fontWeight(.semibold)
                             .foregroundStyle(.secondary)
                         
-                        Text(enforcementCase.priority.rawValue)
+                        Text(enforcementLead.priority.rawValue)
                             .font(.caption2)
                             .foregroundStyle(.white)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
-                            .background(enforcementCase.priority.color, in: Capsule())
+                            .background(enforcementLead.priority.color, in: Capsule())
                     }
                     
-                    Text(enforcementCase.title)
+                    Text(enforcementLead.title)
                         .font(.headline)
                         .lineLimit(1)
                 }
                 
                 Spacer()
                 
-                Text(enforcementCase.status.rawValue)
+                Text(enforcementLead.status.rawValue)
                     .font(.caption)
                     .foregroundStyle(.white)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
-                    .background(enforcementCase.status.color, in: Capsule())
+                    .background(enforcementLead.status.color, in: Capsule())
             }
             
             HStack(spacing: 16) {
@@ -145,7 +145,7 @@ private struct CaseRow: View {
                 
                 Spacer()
                 
-                Text(enforcementCase.updatedAt, style: .relative)
+                Text(enforcementLead.updatedAt, style: .relative)
                     .font(.caption)
                     .foregroundStyle(.tertiary)
             }
@@ -188,6 +188,6 @@ private struct StatusFilterChip: View {
 // MARK: - Preview
 
 #Preview {
-    CaseListView()
+    LeadAggregationView()
         .environment(DataStore())
 }

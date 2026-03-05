@@ -1,45 +1,45 @@
 import SwiftUI
 
-struct NewCaseView: View {
-    @Environment(CaseManager.self) private var caseManager
+struct NewAggregationView: View {
+    @Environment(LeadManager.self) private var leadManager
     @Environment(\.dismiss) private var dismiss
     
     @State private var title = ""
-    @State private var caseNumber = ""
+    @State private var leadNumber = ""
     @State private var description = ""
     @State private var location = ""
-    @State private var priority: EnforcementCase.CasePriority = .medium
+    @State private var priority: EnforcementLead.LeadPriority = .medium
     
     private var isValid: Bool {
-        !title.isEmpty && !caseNumber.isEmpty && !description.isEmpty
+        !title.isEmpty && !leadNumber.isEmpty && !description.isEmpty
     }
     
     var body: some View {
         NavigationStack {
             Form {
                 Section {
-                    TextField("案件标题", text: $title)
-                    TextField("案件编号 (如: TY-2025-0001)", text: $caseNumber)
+                    TextField("聚合标题", text: $title)
+                    TextField("线索编号 (如: TY-2025-0001)", text: $leadNumber)
                 } header: {
                     Text("基本信息")
                 }
                 
                 Section {
-                    TextField("案件描述", text: $description, axis: .vertical)
+                    TextField("线索描述", text: $description, axis: .vertical)
                         .lineLimit(3...6)
                 } header: {
-                    Text("案件描述")
+                    Text("线索描述")
                 }
                 
                 Section {
-                    TextField("案发地点", text: $location)
+                    TextField("相关地点", text: $location)
                 } header: {
                     Text("地点信息")
                 }
                 
                 Section {
                     Picker("优先级", selection: $priority) {
-                        ForEach(EnforcementCase.CasePriority.allCases, id: \.self) { p in
+                        ForEach(EnforcementLead.LeadPriority.allCases, id: \.self) { p in
                             Label(p.rawValue, systemImage: p.systemImage)
                                 .tag(p)
                         }
@@ -49,7 +49,7 @@ struct NewCaseView: View {
                     Text("优先级")
                 }
             }
-            .navigationTitle("新建案件")
+            .navigationTitle("新建线索聚合")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -57,9 +57,9 @@ struct NewCaseView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("创建") {
-                        _ = caseManager.createCase(
+                        _ = leadManager.createAggregation(
                             title: title,
-                            caseNumber: caseNumber,
+                            leadNumber: leadNumber,
                             priority: priority,
                             description: description,
                             location: location
@@ -74,6 +74,6 @@ struct NewCaseView: View {
 }
 
 #Preview {
-    NewCaseView()
-        .environment(CaseManager())
+    NewAggregationView()
+        .environment(LeadManager())
 }

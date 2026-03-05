@@ -1,25 +1,25 @@
 import SwiftUI
 
-struct CaseDetailView: View {
+struct LeadAnalysisView: View {
     @Environment(DataStore.self) private var dataStore
-    @Environment(CaseManager.self) private var caseManager
+    @Environment(LeadManager.self) private var leadManager
     @Environment(\.dismiss) private var dismiss
     
-    @State private var enforcementCase: EnforcementCase
+    @State private var enforcementLead: EnforcementLead
     @State private var showingAddLead = false
     @State private var showingAddNote = false
     @State private var newNoteContent = ""
     
     private var leads: [Lead] {
-        dataStore.leads.filter { enforcementCase.leadIDs.contains($0.id) }
+        dataStore.leads.filter { enforcementLead.leadIDs.contains($0.id) }
     }
     
     private var totalEvidenceCount: Int {
         leads.reduce(0) { $0 + $1.evidences.count }
     }
     
-    init(enforcementCase: EnforcementCase) {
-        self._enforcementCase = State(initialValue: enforcementCase)
+    init(enforcementLead: EnforcementLead) {
+        self._enforcementLead = State(initialValue: enforcementLead)
     }
     
     var body: some View {
@@ -28,40 +28,40 @@ struct CaseDetailView: View {
                 // Header Card
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
-                        Text(enforcementCase.caseNumber)
+                        Text(enforcementLead.leadNumber)
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                         Spacer()
                         Menu {
-                            ForEach(EnforcementCase.CaseStatus.allCases, id: \.self) { status in
+                            ForEach(EnforcementLead.LeadAggregationStatus.allCases, id: \.self) { status in
                                 Button {
-                                    caseManager.updateStatus(status, for: enforcementCase.id)
-                                    enforcementCase.status = status
+                                    leadManager.updateStatus(status, for: enforcementLead.id)
+                                    enforcementLead.status = status
                                 } label: {
                                     Label(status.rawValue, systemImage: status.systemImage)
                                 }
                             }
                         } label: {
-                            Label(enforcementCase.status.rawValue, systemImage: enforcementCase.status.systemImage)
+                            Label(enforcementLead.status.rawValue, systemImage: enforcementLead.status.systemImage)
                                 .font(.caption)
                                 .fontWeight(.semibold)
                                 .foregroundStyle(.white)
                                 .padding(.horizontal, 10)
                                 .padding(.vertical, 5)
-                                .background(enforcementCase.status.color, in: Capsule())
+                                .background(enforcementLead.status.color, in: Capsule())
                         }
                     }
                     
-                    Text(enforcementCase.title)
+                    Text(enforcementLead.title)
                         .font(.title2)
                         .fontWeight(.bold)
                     
                     HStack(spacing: 16) {
-                        Label(enforcementCase.priority.rawValue, systemImage: enforcementCase.priority.systemImage)
+                        Label(enforcementLead.priority.rawValue, systemImage: enforcementLead.priority.systemImage)
                             .font(.subheadline)
-                            .foregroundStyle(enforcementCase.priority.color)
+                            .foregroundStyle(enforcementLead.priority.color)
                         
-                        Label(enforcementCase.location, systemImage: "mappin.and.ellipse")
+                        Label(enforcementLead.location, systemImage: "mappin.and.ellipse")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
@@ -74,15 +74,15 @@ struct CaseDetailView: View {
                 HStack(spacing: 12) {
                     StatCard(value: "\(leads.count)", label: "关联线索", icon: "list.bullet.rectangle", color: .blue)
                     StatCard(value: "\(totalEvidenceCount)", label: "证据文件", icon: "photo.on.rectangle", color: .green)
-                    StatCard(value: "\(enforcementCase.notes.count)", label: "案件笔记", icon: "note.text", color: .orange)
+                    StatCard(value: "\(enforcementLead.notes.count)", label: "分析笔记", icon: "note.text", color: .orange)
                 }
                 .padding(.horizontal)
                 
                 // Description
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("案件描述")
+                    Text("线索描述")
                         .font(.headline)
-                    Text(enforcementCase.description)
+                    Text(enforcementLead.description)
                         .font(.body)
                         .foregroundStyle(.secondary)
                 }
@@ -91,12 +91,12 @@ struct CaseDetailView: View {
                 .padding(.horizontal)
                 
                 // Assigned Officers
-                if !enforcementCase.assignedOfficers.isEmpty {
+                if !enforcementLead.assignedOfficers.isEmpty {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("办案人员")
                             .font(.headline)
                         
-                        FlowLayout(items: enforcementCase.assignedOfficers) { officer in
+                        FlowLayout(items: enforcementLead.assignedOfficers) { officer in
                             HStack(spacing: 6) {
                                 Image(systemName: "person.circle.fill")
                                     .foregroundStyle(.blue)
@@ -174,9 +174,9 @@ struct CaseDetailView: View {
                                 }
                                 
                                 Button {
-                                    caseManager.removeLead(lead.id, from: enforcementCase.id)
-                                    if let index = enforcementCase.leadIDs.firstIndex(of: lead.id) {
-                                        enforcementCase.leadIDs.remove(at: index)
+                                    leadManager.removeLead(lead.id, from: enforcementLead.id)
+                                    if let index = enforcementLead.leadIDs.firstIndex(of: lead.id) {
+                                        enforcementLead.leadIDs.remove(at: index)
                                     }
                                 } label: {
                                     Image(systemName: "xmark.circle.fill")
@@ -191,12 +191,12 @@ struct CaseDetailView: View {
                 .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
                 .padding(.horizontal)
                 
-                // Case Notes
+                // Analysis Notes
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
                         Image(systemName: "note.text")
                             .foregroundStyle(.orange)
-                        Text("案件笔记")
+                        Text("分析笔记")
                             .font(.headline)
                         Spacer()
                         Button {
@@ -207,7 +207,7 @@ struct CaseDetailView: View {
                         }
                     }
                     
-                    if enforcementCase.notes.isEmpty {
+                    if enforcementLead.notes.isEmpty {
                         HStack {
                             Spacer()
                             VStack(spacing: 8) {
@@ -222,7 +222,7 @@ struct CaseDetailView: View {
                         }
                         .padding(.vertical, 20)
                     } else {
-                        ForEach(enforcementCase.notes) { note in
+                        ForEach(enforcementLead.notes) { note in
                             NoteCard(note: note)
                         }
                     }
@@ -233,7 +233,7 @@ struct CaseDetailView: View {
                 
                 // Timeline
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("案件时间线")
+                    Text("时间线")
                         .font(.headline)
                     
                     HStack {
@@ -241,7 +241,7 @@ struct CaseDetailView: View {
                             Text("创建时间")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
-                            Text(enforcementCase.createdAt, style: .date)
+                            Text(enforcementLead.createdAt, style: .date)
                                 .font(.subheadline)
                         }
                         
@@ -251,7 +251,7 @@ struct CaseDetailView: View {
                             Text("最后更新")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
-                            Text(enforcementCase.updatedAt, style: .relative)
+                            Text(enforcementLead.updatedAt, style: .relative)
                                 .font(.subheadline)
                         }
                     }
@@ -262,19 +262,19 @@ struct CaseDetailView: View {
             }
             .padding(.vertical)
         }
-        .navigationTitle("案件详情")
+        .navigationTitle("线索分析")
         .navigationBarTitleDisplayMode(.inline)
         .navigationDestination(for: Lead.self) { lead in
             LeadDetailView(lead: lead)
         }
         .sheet(isPresented: $showingAddLead) {
-            AddLeadToCaseView(enforcementCase: $enforcementCase)
-                .environment(caseManager)
+            AddLeadToAggregationView(enforcementLead: $enforcementLead)
+                .environment(leadManager)
                 .presentationDetents([.medium])
         }
         .sheet(isPresented: $showingAddNote) {
-            AddNoteView(enforcementCase: $enforcementCase)
-                .environment(caseManager)
+            AddNoteToAggregationView(enforcementLead: $enforcementLead)
+                .environment(leadManager)
                 .presentationDetents([.medium])
         }
     }
@@ -309,7 +309,7 @@ private struct StatCard: View {
 // MARK: - Note Card
 
 private struct NoteCard: View {
-    let note: CaseNote
+    let note: LeadNote
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -346,18 +346,18 @@ private struct FlowLayout: View {
     }
 }
 
-// MARK: - Add Lead to Case View
+// MARK: - Add Lead to Aggregation View
 
-struct AddLeadToCaseView: View {
+struct AddLeadToAggregationView: View {
     @Environment(DataStore.self) private var dataStore
-    @Environment(CaseManager.self) private var caseManager
+    @Environment(LeadManager.self) private var leadManager
     @Environment(\.dismiss) private var dismiss
-    @Binding var enforcementCase: EnforcementCase
+    @Binding var enforcementLead: EnforcementLead
     
     @State private var searchText = ""
     
     private var availableLeads: [Lead] {
-        dataStore.leads.filter { !enforcementCase.leadIDs.contains($0.id) }
+        dataStore.leads.filter { !enforcementLead.leadIDs.contains($0.id) }
     }
     
     private var filteredLeads: [Lead] {
@@ -373,8 +373,8 @@ struct AddLeadToCaseView: View {
             List {
                 ForEach(filteredLeads) { lead in
                     Button {
-                        caseManager.addLead(lead.id, to: enforcementCase.id)
-                        enforcementCase.leadIDs.append(lead.id)
+                        leadManager.addLead(lead.id, to: enforcementLead.id)
+                        enforcementLead.leadIDs.append(lead.id)
                         dismiss()
                     } label: {
                         HStack(spacing: 12) {
@@ -412,12 +412,12 @@ struct AddLeadToCaseView: View {
     }
 }
 
-// MARK: - Add Note View
+// MARK: - Add Note to Aggregation View
 
-struct AddNoteView: View {
-    @Environment(CaseManager.self) private var caseManager
+struct AddNoteToAggregationView: View {
+    @Environment(LeadManager.self) private var leadManager
     @Environment(\.dismiss) private var dismiss
-    @Binding var enforcementCase: EnforcementCase
+    @Binding var enforcementLead: EnforcementLead
     
     @State private var noteContent = ""
     @State private var author = "当前用户"
@@ -442,9 +442,9 @@ struct AddNoteView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("保存") {
-                        caseManager.addNote(noteContent, author: author, to: enforcementCase.id)
-                        enforcementCase.notes.insert(
-                            CaseNote(id: UUID(), content: noteContent, timestamp: Date(), author: author),
+                        leadManager.addNote(noteContent, author: author, to: enforcementLead.id)
+                        enforcementLead.notes.insert(
+                            LeadNote(id: UUID(), content: noteContent, timestamp: Date(), author: author),
                             at: 0
                         )
                         dismiss()
@@ -460,8 +460,8 @@ struct AddNoteView: View {
 
 #Preview {
     NavigationStack {
-        CaseDetailView(enforcementCase: CaseManager().cases[0])
+        LeadAnalysisView(enforcementLead: LeadManager().aggregations[0])
             .environment(DataStore())
-            .environment(CaseManager())
+            .environment(LeadManager())
     }
 }

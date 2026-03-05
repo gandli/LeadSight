@@ -2,7 +2,7 @@ import SwiftUI
 
 struct LeadListView: View {
     @Environment(DataStore.self) private var dataStore
-    @Environment(CaseManager.self) private var caseManager
+    @Environment(LeadManager.self) private var leadManager
     @State private var searchText = ""
     @State private var showingAddLead = false
     @State private var showingAdvancedSearch = false
@@ -68,7 +68,7 @@ struct LeadListView: View {
                     
                     ForEach(filteredLeads) { lead in
                         NavigationLink(value: lead) {
-                            EnhancedLeadRow(lead: lead, caseManager: caseManager)
+                            EnhancedLeadRow(lead: lead, leadManager: leadManager)
                         }
                     }
                     .onDelete { offsets in
@@ -143,10 +143,10 @@ private struct StatusChip: View {
 
 private struct EnhancedLeadRow: View {
     let lead: Lead
-    let caseManager: CaseManager
+    let leadManager: LeadManager
     
-    var relatedCase: EnforcementCase? {
-        caseManager.caseForLead(lead.id)
+    var relatedAggregation: EnforcementLead? {
+        leadManager.aggregationForLead(lead.id)
     }
     
     var body: some View {
@@ -169,8 +169,8 @@ private struct EnhancedLeadRow: View {
                         .font(.headline)
                         .lineLimit(1)
                     
-                    if let relatedCase = relatedCase {
-                        Text(relatedCase.caseNumber)
+                    if let relatedAggregation = relatedAggregation {
+                        Text(relatedAggregation.leadNumber)
                             .font(.caption2)
                             .foregroundStyle(.white)
                             .padding(.horizontal, 5)
@@ -223,5 +223,5 @@ private struct EnhancedLeadRow: View {
 #Preview {
     LeadListView()
         .environment(DataStore())
-        .environment(CaseManager())
+        .environment(LeadManager())
 }
