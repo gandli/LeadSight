@@ -8,7 +8,7 @@ struct Lead: Identifiable, Codable, Hashable {
     let timestamp: Date
     let content: String
     let reporter: String
-    let status: LeadStatus
+    var status: LeadStatus  // Mutable to allow direct status updates
     let aiAnalysis: String?
     let imageName: String?
     var evidences: [Evidence]

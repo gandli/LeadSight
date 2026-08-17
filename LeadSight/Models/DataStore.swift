@@ -58,19 +58,7 @@ class DataStore {
     
     func updateLeadStatus(_ leadID: UUID, to newStatus: Lead.LeadStatus) {
         if let index = leads.firstIndex(where: { $0.id == leadID }) {
-            leads[index] = Lead(
-                id: leads[index].id,
-                title: leads[index].title,
-                location: leads[index].location,
-                timestamp: leads[index].timestamp,
-                content: leads[index].content,
-                reporter: leads[index].reporter,
-                status: newStatus,
-                aiAnalysis: leads[index].aiAnalysis,
-                imageName: leads[index].imageName,
-                evidences: leads[index].evidences,
-                relatedLeadIDs: leads[index].relatedLeadIDs
-            )
+            leads[index].status = newStatus
         }
     }
     
