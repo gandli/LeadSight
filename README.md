@@ -13,9 +13,11 @@ LeadSight is a premium iOS application tailored for tobacco monopoly law enforce
 
 - `LeadSight/Models`: Data models (`Lead`, `Warning`) and the centralized `DataStore`.
 - `LeadSight/Views`: SwiftUI components and view layers.
+  - `MainTabView.swift`: Root tab navigation.
   - `Home`: Dashboard with smart judgment and latest inspections.
   - `Leads`: Detailed list and search interface for enforcement leads.
-  - `Components`: Reusable UI elements (`WarningCard`, `EmergencyButton`, etc.).
+  - `Analysis` / `Cases` / `Evidence` / `Location` / `Profile`: Feature modules.
+  - `Components`: Reusable UI elements (`WarningCard`, `EmergencyButton`, `LeadRow`, `SectionHeader`).
 
 ## Requirements
 
